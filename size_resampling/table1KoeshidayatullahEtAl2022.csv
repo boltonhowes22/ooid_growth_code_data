@@ -1,0 +1,39 @@
+Approx. age (Ma),Series/Epoch,Mean (µm),Min,5th,,25th,50th,75th,95th,Max,Number of formations,Period
+529,Terreneuvian,636,210,291,,475,551,630,1196,4140*,4,Cambrian
+514,Series 2,1220,100,353,,733,1050,1390,3279,5540,4,Cambrian
+503,Miaolingian,609,80,227,,330,480,766,1268,5000*,6,Cambrian
+503,Series 3,609,80,227,,330,480,766,1268,5000*,6,Cambrian
+491,Furongian,611,100,225,,354,492,704,1159,8000*,4,Cambrian
+477,Lower Ordovician,396,160,220,,280,350,415,804,1110,2,Ordovician
+477,Early Ordovician,396,160,220,,280,350,415,804,1110,2,Ordovician
+465,Middle Ordovician,428,160,274,,318,366,455,779,3000*,3,Ordovician
+450,Upper Ordovician,494,189,210,,268,350,455,1182,5000*,3,Ordovician
+427,Wenlock-Ludlow,387,100,110,,155,191,415,1299,2500*,4,Silurian
+427,Wenlock,387,100,110,,155,191,415,1299,2500*,4,Silurian
+427,Gorstian,387,100,110,,155,191,415,1299,2500*,4,Silurian
+427,(Ludlow),387,100,110,,155,191,415,1299,2500*,4,Silurian
+420,Ludlow-Pridoli,260,89,106,,125,185,269,709,1290,6,Silurian
+420,Ludfordian,260,89,106,,125,185,269,709,1290,6,Silurian
+420,Pridoli,260,89,106,,125,185,269,709,1290,6,Silurian
+408,Lower Devonian,586,345,348,,420,640,710,828,870,1,Devonian
+387,Middle Devonian,440,50,273,,342,411,484,774,5000*,3,Devonian
+372,Upper Devonian,299,128,148,,172,272,360,507,1800*,4,Devonian
+346,Mississippian,774,114,351,,483,659,899,1408,5500,4,Carboniferous
+312,Pennsylvanian,606,141,153,,174,415,591,1863,8000*,6,Carboniferous
+292,Cisuralian,421,177,231,,294,381,549,663,796,3,Permian
+292,Lower Permian,421,177,231,,294,381,549,663,796,3,Permian
+268,Guadalupian,285,60,172,,214,260,321,447,1020,6,Permian
+257,Lopingian,427,58,130,,400,445,478,569,920,3,Permian
+251,Lower Triassic,700,68,82,,281,457,855,1910,12000*,9,Triassic
+245,Middle Triassic,430,126,141,,229,399,552,846,2000*,4,Triassic
+228,Upper Triassic,663,167,315,,526,641,754,1039,2276,3,Triassic
+200,Lower Jurassic,411,95,220,,281,317,429,897,2000*,4,Jurassic
+172,Middle Jurassic,509,90,178,,420,516,612,815,1150,3,Jurassic
+158,Upper Jurassic,543,100,140,,310,470,690,1183,3000*,6,Jurassic
+140,Lower Cretaceous,585,100,167,,338,590,781,982,2100*,10,Cretaceous
+100,Upper Cretaceous,449,180,230,,300,350,465,895,3200*,3,Cretaceous
+59,Paleocene,242,120,141,,176,231,285,389,1000*,1,Paleogene
+46,Eocene,281,169,192,,223,276,323,280,500,1,Paleogene
+27,Oligocene,405,210,264,,340,420,460,530,590,1,Paleogene
+20,Miocene,369,146,168,,202,252,475,829,2000*,4,Neogene
+0.0117,Holocene,287,80,157,,195,253,360,509,820,5,Quaternary
