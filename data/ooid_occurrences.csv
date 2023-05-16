@@ -1,0 +1,53 @@
+latitude,longitude,period,age,NormalMarine,locality,formation,present_comp,original_comp,fabric,environment,sample,first_author,journal,year,vol,first_page,comments,compiled_by
+40,-119.5,Qhl,0,0,NEVADA,-,LMC,LMC,RADIAL,LACUSTRINE,,POPP,COATED GRAINS,1983,,DO,PYRAMID LAKE,"WIlkinson,1990"
+40,-119.5,Qhl,0,0,NEVADA,-,ARG,ARG,RADIAL,LACUSTRINE,,POPP,COATED GRAINS,1983,,DO,PYRAMID LAKE,"WIlkinson,1990"
+27,-97.6,Qhl,0,0,TEXAS,-,HMC,HMC,RADIAL,MARINE ESTUARY,,LAND,JOUR SED PET,1979,49,1269,BAFFIN BAY,"WIlkinson,1990"
+27,-97.6,Qhl,0,0,TEXAS,-,ARG,ARG,TANGENTIAL,BEACH-SF,,SCHOLLE,AAPG MEM,1978,27,116,BAFFIN BAY,"WIlkinson,1990"
+25,-79.25,Qhl,0,1,BAHAMAS,-,ARG,ARG,,,TC-2-RUT,PIGOTT,PhD DISSERT,1981,,,CAT CAY,"WIlkinson,1990"
+25.5,-79.25,Qhl,0,1,Cat Cay,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+25.4,-79.1,Qhl,0,1,Bimini,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+26.9,-79.04,Qhl,0,1,Lily Bank,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+27.2,-78.4,Qhl,0,1,Abaco Tidal Deltas,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+25,-78.13,Qhl,0,1,BAHAMAS,-,ARG,ARG,,,TC-625-RXM,PIGOTT,PhD DISSERT,1981,,,JOULTER CAL,"WIlkinson,1990"
+25.2,-78.1,Qhl,0,1,Joulter's Cay,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+25.6,-77.86,Qhl,0,1,Berry Islands,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+23.3,-76.75,Qhl,0,1,Tongue of the Ocean,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+24.4,-76.7,Qhl,0,1,Shroud Cay,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+24.3,-76.5,Qhl,0,1,Butterfly Beach,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+25,-76,Qhl,0,1,Schooner Cat,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+24.5,-75.6,Qhl,0,1,Pigeon Cay,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+21.75,-72.4,Qhl,0,1,Long Bay Beach,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+21.4,-71.6,Qhl,0,1,Ambergris Cay,,,,,,,Diaz,Earth Science Reviews,2019,,,,
+30,35.5,Qhl,0,1,ISRAEL,-,ARG,ARG,RANDOM,HYPERSAL MARINE,,GARBER,JOUR SED PET,1981,51,455,DEAD SEA,"WIlkinson,1990"
+26,50.3,Qhl,0,1,ARABIAN SEA,-,ARG,ARG,,NORMAL MARINE,,LOREAU,PERSIAN GULF,1973,,279,,"WIlkinson,1990"
+24.5,54.5,Qhl,0,0,,-,ARG,ARG,,TIDAL,Ro-053-QAs,,,,,,ABU DHABI,"WIlkinson,1990"
+40,-112,Qhl,0,0,UTAH,-,ARG,ARG,RADIAL,HYPERSAL LACUST,,SANDBERG,SEDIMENTOLOGY,1975,22,497,GREAT SALT LAKE,"WIlkinson,1990"
+-25.27,114.22,Qhl,0,0,Shark Bay,-,,,,,,Davies,,1970,,,"Carbonate bank sedimentation, eastern Shark Bay, western Australia",Gallagher 2018
+-18.88039,-159.75052,Qhl,0,0,Aitutaki Atoll,,,,,,,Rankey,Geology,2009,,,,
+40,28,Qhl,>0,,GREECE,-,,,,,,RICHTER,N Jb GEOL PAL,1976,151,192,,"WIlkinson,1990"
+-18.5,121.7,,3.5,,Port Smith,-,,,,,,Hearty,,2006,,,"The enigma of 3400 years BP coastal oolites in tropical northwest Western Australia‚Ä¶ why then, why there?",Gallagher 2018
+-28.75,48.5,,10,,Persian Gulf,-,,,,,,Milliman,,1974,,,Recent sedimentary carbonates: Part 1 marine carbonates,Gallagher 2018
+3,73.2,,10,,Maldives,-,,,,,,Betzler,,2015,,,The leaking bucket of a Maldives atoll: implications for the understanding of carbonate platform drowning,Gallagher 2018
+25,-77.2,Qpl,10,,NEW PROVIDENCE IS,,,ARG,,,TC-735-RX,PIGOTT,PhD DISSERT,1981,,,,"WIlkinson,1990"
+21,-86.7,Qpl,10,,MEXICO,,,ARG,,,,PIGOTT,PhD DISSERT,1981,,,ISLA MUJERAS,"WIlkinson,1990"
+-14.6,145.46,,10,,Lizard Island,-,,,,,,Marshall,,1975,,,High-magnesium calcite ooids from the Great Barrier Reef,Gallagher 2018
+-4,154.93,,10,,Malden Atoll,,,,,,,Milliman,,1974,,,Recent sedimentary carbonates: Part 1 marine carbonates,Gallagher 2018
+20.78,156.83,,12.7,,Maui Nui,-,,,,,,Hearty,,2010,,,A pulse of ooid formation in Maui Nui (Hawaiian Islands) during Termination I,Gallagher 2018
+-18,118,,15,,NWS Seabed,-,,,,,,Jones,,1973,,,Marine geology of the Northwest Australian continental shelf,Gallagher 2018
+-23,152.5,,16.8,,Capricorn Channel,-,,,,,,Yokoyama,,2006,,,"Sea-level during the early deglaciation period in the Great Barrier Reef, Australia",Gallagher 2018
+35,11,Qhl,20,,TUNESIA,-,,ARG,,,,FABRICIUS,SCIENCE,1970,169,757,,"WIlkinson,1990"
+4,-50,Qpl,20,,AMAZON SHELF,-,HMC,HMC,RADIAL,RELICT,,MILLIMAN,SEDIMENTOLOGY,1975,22,137,MOLE % MgCO3 = 12,"WIlkinson,1990"
+26,50.3,Qpl,20,,ARABIAN SEA,-,CAL/ARG,ARG,SPARRY,,TC-870-RX,PICHA,SEDIMENTOLOGY,1978,25,427,KUWAIT,"WIlkinson,1990"
+18.5,71,,23,,Western India,-,,,,,,Rao,,2017,,,Relict ooids off northwestern India: Inferences on their genesis and late Quaternary sea level,Gallagher 2018
+21.5,90,,25,,Bengal Shelf,-,,,,,,Wiedicke,,1999,,,Oolitic beach barriers of the last Glacial sea-level lowstand at the outer Bengal shelf,Gallagher 2018
+30,-80,Qpl,26,,GEORGIA,,ARG,ARG,TANG-CONC,SHALLOW MARINE,,PILKEY,JOUR SED PET,1966,36,462,OOIDS,"WIlkinson,1990"
+-19.5,116.6,,40,,BH4/Angel Core,-,,,,,,Gallagher,,2014,,,Seismic and stratigraphic evidence for reef expansion and onset of aridity on the Northwest Shelf of Australia during the Pleistocene,Gallagher 2018
+-19.72,63.42,,120,,Rodrigues,-,,,,,,Brathwaite,,1994,,,Quaternary oolites in the Indian Ocean,Gallagher 2018
+17.9,71.5,,120,,Wester Shelf India,- ,ARG,ARG,,,,RAO,SEDIMENTARY GEOLOGY,2017,358,44,,HOWES
+25,-80,Qpl,120,,FLORIDA,,CAL/ARG,ARG,SPARRY,SHOAL,,HALLEY,AAPG BULL,1977,61,519,MIAMI OOLITE,"WIlkinson,1990"
+-19.5,116.6,,155,,BH4/Angel Core,-,,,,,,Gallagher,,2014,,,Seismic and stratigraphic evidence for reef expansion and onset of aridity on the Northwest Shelf of Australia during the Pleistocene,Gallagher 2018
+-19.82,115.7,,390,,356-U1462,-,,,,,,Gallagher,,2018,,,The enigma of rare Quaternary oolites in the Indian and Pacific Oceans: A result of global oceanographic physicochemical conditions or a sampling bias?,Gallagher 2018
+-20.5,115.18,,400,,Maitland North-1,-,,,,,,Gallagher,,2014,,,Seismic and stratigraphic evidence for reef expansion and onset of aridity on the Northwest Shelf of Australia during the Pleistocene,Gallagher 2018
+-19.82,115.7,,570,,356-U1462,-,,,,,,Gallagher,,2018,,,The enigma of rare Quaternary oolites in the Indian and Pacific Oceans: A result of global oceanographic physicochemical conditions or a sampling bias?,Gallagher 2018
+-19.82,115.7,,720,,356-U1462,-,,,,,,Gallagher,,2018,,,The enigma of rare Quaternary oolites in the Indian and Pacific Oceans: A result of global oceanographic physicochemical conditions or a sampling bias?,Gallagher 2018
+16,70,Qhl,>0,,,-,,,,,,RAO,DEEP SEA RESREARCH,1988,,,CORE ON INDIAN SHELF,HOWES
