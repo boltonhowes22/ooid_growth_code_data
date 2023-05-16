@@ -14,3 +14,8 @@ Figure 6: Run ooid_growth.m <br>
 Figure 7: alk_LG_modern.m <br>
 Figure 8: ooid_potential.m <br>
 Figure 9: resampling.ipynb and the files within the size_resampling directory <br>
+
+
+A few of the data files are two big for GitHub. 
+They can be accessed here: https://www.dropbox.com/sh/ducwzz38e5vdjbh/AACjIPcWOTQ_bWAbIBXoRIIoa?dl=0
+And will be moved to an permanent archive when the manuscript is published. 
