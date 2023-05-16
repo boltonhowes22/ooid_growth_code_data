@@ -17,5 +17,5 @@ Figure 9: resampling.ipynb and the files within the size_resampling directory <b
 
 
 A few of the data files are two big for GitHub. 
-They can be accessed here: https://www.dropbox.com/sh/ducwzz38e5vdjbh/AACjIPcWOTQ_bWAbIBXoRIIoa?dl=0
-And will be moved to an permanent archive when the manuscript is published. 
+They can be accessed here: https://www.dropbox.com/sh/ducwzz38e5vdjbh/AACjIPcWOTQ_bWAbIBXoRIIoa?dl=0,
+and will be moved to an permanent archive when the manuscript is published. Download them and add to the data directory to run all of the code.
