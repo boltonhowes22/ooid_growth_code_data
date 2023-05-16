@@ -1,0 +1,649 @@
+% This script produces the figures and analyses in Figure 8 of the
+% manuscript 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clear; close all;
+
+% some plotting setup 
+lw = 2;                         %  Linewidth
+colors =[hex2rgb('#fa9442');    %  Colors
+        hex2rgb('#008aa1');
+        hex2rgb('#1b3644');
+        hex2rgb('#a2142f')];
+    
+% Import Datasets
+
+% OK, import XDD data
+xdd = readtable('data/binned_xDD_ooids.csv');
+
+% import the Mg/Ca data
+mgca = readtable('data/mg_ca_compilation.xlsx', 'sheet', 'compilation');
+
+% Import carbonate shelf area
+carb_shelf_K = readtable('data/kiessling2003_platform_proportions.xlsx', 'sheet', 'shallow_carb_kiess2000');
+allochem = readtable('data/kiessling2003_platform_proportions.xlsx', 'sheet', 'kiessling2003allochems');
+
+
+% Parse the Mg/Ca data
+% sort by age
+[mgca_age, inds] = sort(mgca.Age); 
+
+% Mean, high, low
+mgca_mean = mgca.Mg_Ca_mean(inds);
+mgca_low = mgca.Mg_Ca_low(inds);
+mgca_high = mgca.Mg_Ca_high(inds);
+
+% context/source
+sources = mgca.Source(inds);
+type = mgca.Type(inds);
+outlier = logical(mgca.Outlier(inds));
+
+
+%% Quick clean up for the xDD dataset
+
+% for the phanerozoic, there is 1 location with an ooid, but no carbonate,
+% it is just mucking things up -- i think it is because there are some iron
+% oolites sneaking into the final database results. 
+xdd.all_carbonate(xdd.all_carbonate == 0) = 1;
+
+% preallocate the arrays
+xdd.re_all_carbonate = zeros(height(xdd), 1);
+xdd.re_num_ooids = zeros(height(xdd), 1);
+
+for bin = 1:height(xdd)
+   
+    % there can't be more ooids than carbonates
+    if xdd.num_ooids(bin) > xdd.all_carbonate(bin)
+        xdd.re_all_carbonate(bin) = xdd.num_ooids(bin);
+    else
+        xdd.re_all_carbonate(bin) = xdd.all_carbonate(bin);
+    end
+    
+    % if there is less than 5 carbonate occurrences, lets just not worry
+    % about that bin
+    threshold = 10;
+    if  xdd.all_carbonate(bin) <= threshold
+        xdd.re_all_carbonate(bin) = NaN;
+        xdd.re_num_ooids(bin) = NaN;
+    else
+       xdd.re_all_carbonate(bin) = xdd.re_all_carbonate(bin);
+       xdd.re_num_ooids(bin) = xdd.num_ooids(bin);
+    end
+    
+end
+
+
+% Two normalizations 
+ooid_carb = (xdd.re_num_ooids ./ xdd.re_all_carbonate) .* xdd.re_all_carbonate;
+ooid_sed = xdd.re_num_ooids ./ xdd.all_sediment;
+
+% Plot the normalized ooid occurrences
+figure(1);clf
+subplot(4,1,1); 
+hold on; box on
+
+
+thresh_ind =  xdd.all_carbonate <= threshold;
+% medium smooth
+gwin = 2;
+oc_smooth = smoothdata(ooid_carb, 'gaussian',gwin);
+os_smooth = smoothdata(ooid_sed, 'gaussian',gwin);
+
+% Temporary variable for identifying indeces with low total counts
+oc_smooth_t = oc_smooth;
+os_smooth_t= os_smooth;
+oc_smooth_t(thresh_ind) = NaN;
+os_smooth_t(thresh_ind) = NaN;
+
+% Get the very smooth 
+gwin_oc = 40;
+oc_vsmooth = smoothdata(ooid_carb, 'gaussian',gwin_oc);
+os_vsmooth = smoothdata(ooid_sed, 'gaussian',gwin_oc);
+
+% Temporary variable
+oc_vsmooth_t = oc_vsmooth;
+os_vsmooth_t= os_vsmooth;
+oc_vsmooth_t(thresh_ind) = NaN;
+os_vsmooth_t(thresh_ind) = NaN;
+
+% plot the smooth and vsmooth
+alpha = .5;
+plot(xdd.age, oc_vsmooth, 'color', [colors(3,:) .2],'linewidth', 3, 'linestyle', '-')
+plot(xdd.age, oc_vsmooth_t, 'color', colors(3,:), 'linewidth', 3, 'linestyle', '-')
+plot(xdd.age, oc_smooth_t, 'color', [colors(3,:) alpha], 'linewidth', lw, 'linewidth', .25, 'linestyle', '-')
+
+% Format 
+ylabel('normalized ooids')
+ylim([-10 max(oc_smooth_t)*1.1])
+yyaxis right
+
+
+% Plot the Kiessling Data
+for t = 1:height(allochem)
+
+    plot([allochem.start_age(t) allochem.end_age(t)],...
+        100*[allochem.oolitic(t) allochem.oolitic(t)],...
+         '-', 'linewidth', lw-.5, 'color' , colors(1,:))
+     if t > 1
+     plot([allochem.start_age(t) allochem.start_age(t)],...
+         100*[allochem.oolitic(t) allochem.oolitic(t-1)],...
+         '-', 'linewidth', lw-.5, 'color' , colors(1,:))
+
+     end
+end
+
+% Format
+ylim([-10 60])
+formatTS()
+
+%% Sort by Age 
+
+% interpolate
+step = 1; % in millions of years
+
+% remove outliers
+age_no = mgca_age(outlier);
+mgca_mean_no = mgca_mean(outlier);
+type_track = type(outlier);
+
+
+% average points from same time
+un = unique(age_no);
+for x = 1:length(unique(age_no))
+    
+        ind = find(age_no == un(x));
+        av_mgca(x) = mean(mgca_mean_no(ind));
+        age(x) = un(x);
+        type_fin(x) = type_track(ind(1));  
+
+end
+
+% Do the interpolation
+xi = floor(age(1)):step:ceil(age(end));
+yi = interp1(age, av_mgca, xi, 'linear');
+
+
+% Make the plot
+% Smooth the interpolated data
+gwin = 40; % set window for smoothing 
+mgca_smooth = smoothdata(yi, 'lowess',gwin);
+
+% Plot Mg/Ca data
+subplot(4,1,2)
+hold on; box on;
+
+
+% plot the different data sources with unique symbols
+types = unique(type_fin);
+symbols = {'o';'d';'^';'p'};    % marker symbols
+sz = 40;                        % marker size
+alpha = .3;                     % slightly transparent
+
+% plot the data uncertainty
+for x = 1:length(mgca_low)
+    
+    if ~isnan(mgca_low(x))
+        
+       plot([mgca_age(x) mgca_age(x)], [mgca_low(x) mgca_high(x)],...
+           'Color', [colors(3,:) alpha], 'LineWidth', .25) 
+    end
+end
+
+% plot the outliers
+for t = 1:length(types)
+    
+    ind = strcmp(type, types(t));
+
+    s = scatter(mgca_age(ind & ~outlier), mgca_mean(ind & ~outlier), sz,...
+        'MarkerEdgeColor', colors(3,:),...
+        'MarkerEdgeAlpha', alpha,...
+        'MarkerFaceColor', [1 1 1],...
+        'Marker', symbols{t});
+
+end
+
+% plot the everything else
+for t = 1:length(types)
+    
+    ind = strcmp(type_fin, types(t));
+    
+    
+    s = scatter(age(ind), av_mgca(ind), sz,...
+        'MarkerEdgeColor', colors(3,:),...
+        'MarkerEdgeAlpha', alpha,...
+        'MarkerFaceColor', colors(3,:),...
+        'MarkerFaceAlpha', .8,...
+        'Marker', symbols{t});
+
+end
+
+% Plot smoothed data
+plot(xi, mgca_smooth, 'color', colors(3,:), 'linewidth', lw)
+
+% axis setup 
+ylabel('Mg/Ca')
+ylim([0 max(av_mgca)*1.1])
+formatTS()
+
+
+%%
+
+subplot(4,1,3)
+
+% Load Blakey Reconstructions
+load('data/Blakey_reconstructions.mat');
+lat_bands = 0:10:80;
+shallow_lat_bands_all = cat(1,database(:).shallow_lat_bands);
+cum_shallow_lat = cumsum(shallow_lat_bands_all,2);
+tspan = [-600 0]*1e6;   % units: yrs -- defining 541 Myr ago as -541e6
+tinterp = linspace(min(tspan),max(tspan),541);
+w_smooth = 5; % smoothing window
+k = 5;        % smoothing parameter for t in datasets
+
+% Area of shallow water with  |LATITUDE| <= 40 DEGREES
+lat_lim = 40;   
+v_lat = lat_bands < lat_lim;
+A_Blakey_smooth = movmean(interp1(-[database(:).Age]',...
+     sum(shallow_lat_bands_all(:,v_lat),2),tinterp/1e6,'nearest','extrap'),40) * 1000^2;
+
+% Plot the area of shallow water platforms 
+plot(-tinterp/1e6,movmean(A_Blakey_smooth,w_smooth),'linewidth',2, 'color', colors(2,:));
+ylabel('A_{shallow} [km^2]')
+
+% Plot the F_deep
+yyaxis right
+r = 0.4e-7;
+offset = -225e6;
+F_rain = (1 ./ (1 + exp(-r*(tinterp-offset)))); % sigmoidal function that steps up at the mid-Mesozoic revolution
+plot(-tinterp/1e6,F_rain,'linewidth',2,'Color',[1 1 1]/1.4);
+ylim([0 1.4]);
+ylabel('F_{deep}');
+
+% Format
+formatTS()
+
+
+%% Ooid Potential Model  
+
+J_in_C = 30e12;         % units: mol yr-1, Middleburg et al. (2021)
+J_in_Alk = 2*J_in_C;    % units: mol yr-1, Middleburg et al. (2021)
+SAL = 35;               % psu
+T0 = 25;                % units: deg C
+ocean_mass = 3.67e21;   % kg
+alk_thresh = 2380;      % umol/kg -- alk threshold required for ooid production
+tspan = [-600 0]*1e6;   % units: yrs -- defining 541 Myr ago as -541e6
+
+k = 5;                  % smoothing parameter for t in datasets
+
+% Load data
+
+Earth_SA = 510.1e6 * 1000^2; % m^2 -- surface area of Earth
+% A_Blakey = interp1(-[database.Age]'*1e6,[database.frac_shallow]',tinterp) * Earth_SA;
+% A_Blakey_smooth = movmean(A_Blakey,3); % mean(A_Blakey) * ones(size(t_Blakey)); 
+
+% CaCO3 rain rate: Broecker & Peng (1987) and Opdyke & Walker (1992)
+% (way I got this number--Broecker 1987: CaCO3 rain = 1.5 g cm-2 kyr-1, and
+% Opdyke1992: CaCO3 flux = 60% calcite, 40% aragonite)
+CaCO3_rain = 0.9 / 100.0869 * 100^2 / 1000; % convert from [g cm-2 kyr-1] to [mol m-2 yr-1]
+offset = -225e6;
+r = 0.4e-7;
+F_rain = (1 ./ (1 + exp(-r*(tinterp-offset)))); % sigmoidal function that steps up at the mid-Mesozoic revolution
+
+load('data/MgCa_fit.mat'); % dataset created in Major_Ion_Data.m
+Ca_median = interp1(-1e6*xpred,Ca_pred(:,prc_intervals == 50),tinterp);
+Mg_median = interp1(-1e6*xpred,Mg_pred(:,prc_intervals == 50),tinterp);
+SO4_median = -0.68 * Ca_median + 31;
+
+
+%% Plot A_shallow, [Ca], and [Mg]
+
+xlims = [0,550]; % Ma
+
+figure(5)
+clf
+subplot(4,1,1)
+% A_shallow
+hold on; box on; grid on; 
+pAS = plot(-tinterp/1e6,A_Blakey_smooth,'linewidth',2,'color',[1 1 1]/2.5);
+fill([-tinterp(1),-tinterp,-tinterp(end)]/1e6,[0,A_Blakey_smooth,0],[1 1 1]/2.5,'facealpha',0.2,'edgecolor','none');
+set(gca,'xdir','reverse');
+xlabel('Age [Ma]');
+ylabel('A_{shallow} [m^2]');
+xlim(xlims);
+yyaxis right;
+plot(-tinterp/1e6,F_rain,'linewidth',2,'Color',[1 1 1]/1.4);
+ylim([0 1.4]);
+ylabel('F_{deep}');
+
+prc_intervals = 10:5:90;
+x = norminv(prc_intervals/100);
+cmap = brewermap(floor(length(x)/2)+1,'Blues');
+subplot(4,1,2);
+hold on; box on; grid on;
+for i = 1:floor(length(x)/2)
+    fill([xpred; flipud(xpred)],[prctile(Ca_fit1,prc_intervals(i),2); flipud(prctile(Ca_fit1,prc_intervals(end+1-i),2))],cmap(i,:),'edgecolor','none');
+end
+pM = plot(0,10.2,'kp','markersize',14,'markerfacecolor',[1 1 1]/3);
+plot(-tinterp/1e6,Ca_median,'k-');
+set(gca,'xdir','reverse');
+ylabel('[Ca] [mmol/kg]');
+xlim(xlims);
+ylim([0 50]);
+
+cmap = brewermap(floor(length(x)/2)+1,'Reds');
+subplot(4,1,3);
+hold on; box on; grid on;
+for i = 1:floor(length(x)/2)
+    fill([xpred; flipud(xpred)],[prctile(Mg_fit1,prc_intervals(i),2); flipud(prctile(Mg_fit1,prc_intervals(end+1-i),2))],cmap(i,:),'edgecolor','none');
+end
+pM = plot(0,52,'kp','markersize',14,'markerfacecolor',[1 1 1]/3);
+plot(-tinterp/1e6,Mg_median,'k-');
+set(gca,'xdir','reverse');
+ylabel('[Mg] [mmol/kg]');
+xlim(xlims);
+ylim([10 60]);
+
+
+
+
+%% Do a simple box model of the ocean carbon cycle
+
+% Initial states
+C0 = 2200 / 1e6; % units: mol kgSW-1
+Alk0 = 2400 / 1e6; % units: mol kgSW-1
+y0 = [C0,Alk0];
+chi = 8e-3; % dimensionless tunable parameter -- relates global shelf area [m2] to carbonate mineral precip area [m2]
+options = odeset('RelTol', 1e-6, 'AbsTol', 1e-6, 'InitialStep', 100);
+% Use prescribed constant T:
+Tinterp = T0 * ones(size(tinterp));
+chi2 = 0.5; % preservation term -- deep ocean CaCO3 sink
+
+ti = tic;
+[t,y] = ode15s(@(t,y) ode_scenario2(t,y,SAL,chi,A_Blakey_smooth,...
+    J_in_C,J_in_Alk,ocean_mass,tinterp,Tinterp,...
+    Ca_median,Mg_median,SO4_median,Earth_SA,F_rain,CaCO3_rain,chi2),...
+    tspan, y0, options);
+fprintf('Done solving ODE: t = %2.0f s.\n',toc(ti));
+[Result,~,~] = CO2SYS_modified(y(:,1)*1e6,y(:,2)*1e6,2,1,SAL,T0,T0,0,0,...
+    interp1(tinterp,Ca_median,t),interp1(tinterp,Mg_median,t),...
+    interp1(tinterp,SO4_median,t),15,1,0,0,1,15,1,2,2);
+
+Omega_C = Result(:,17);
+ALK = Result(:,1);
+DIC = Result(:,2);
+% burn-in period of 5 Myr:
+Omega_C(-t/1e6 > 595) = NaN;
+ALK(-t/1e6 > 595) = NaN;
+DIC(-t/1e6 > 595) = NaN;
+
+% Plot results
+
+w_smooth = 25; % smoothing window
+
+figure(3)
+clf
+% Carbonate system parameters
+subplot(2,1,1);
+hold on; box on; grid on;
+pALK = plot(-tinterp/1e6,movmean(interp1(t,ALK,tinterp),w_smooth),'linewidth',2);
+pDIC = plot(-tinterp/1e6,movmean(interp1(t,DIC,tinterp),w_smooth),'linewidth',2);
+ylabel('[umol/kg]');
+yyaxis right;
+pOmega = plot(-tinterp/1e6,movmean(interp1(t,Omega_C,tinterp),w_smooth),'linewidth',2);
+ylabel('\Omega_C');
+legend([pALK,pDIC,pOmega],'ALK','DIC','Omega');
+set(gca,'xdir','reverse');
+title('Carbonate system parameters');
+
+% Alk and A_shallow
+subplot(2,1,2);
+hold on; box on; grid on;
+pALK = plot(-tinterp/1e6,movmean(interp1(t,ALK,tinterp),w_smooth),'linewidth',2);
+ylabel('Mean alkalinity [umol/kg]')
+yyaxis right;
+plot(-tinterp/1e6,movmean(A_Blakey_smooth,w_smooth),'linewidth',2);
+ylabel('A_{shallow} [km^2]')
+set(gca,'xdir','reverse');
+title('Mean ocean alkalinity and A_{shallow}');
+
+% Interpolate results
+ALK_interp = interp1(t,ALK,tinterp,'linear');
+f_ALK_above_thresh = nan(size(ALK_interp));
+
+% Normalize
+ALK_interp_norm = (ALK_interp-min(ALK_interp)) / range(ALK_interp);
+A_norm = (A_Blakey_smooth - min(A_Blakey_smooth)) / range(A_Blakey_smooth);
+ooid_potential2 = ALK_interp_norm .* A_norm;
+ooid_potential2 = ooid_potential2 / max(ooid_potential2); % normalize to maximum of 1
+
+
+
+%% Plot the ooid potential 
+figure(11)
+subplot(4,1,4); 
+hold on; box on; grid on;
+plot(-tinterp/1e6,movmean(ooid_potential2,w_smooth),'color', colors(4,:),'linewidth',4);
+
+% Format
+ylabel('Relative ooid abundance')
+xlabel('Age [Ma]');
+formatTS()
+ylim([-.2 1.2]);
+set(gca, 'fontsize', 14, 'Xdir', 'reverse')
+
+% Plot xDD and allochem
+yyaxis right
+b_alpha = .25;
+
+% Plot the Kiessling Data
+for t = 1:height(allochem)
+
+    plot([allochem.start_age(t) allochem.end_age(t)],...
+        100*[allochem.oolitic(t) allochem.oolitic(t)],...
+         '-', 'linewidth', 2, 'color' , [colors(1,:) b_alpha])
+     if t > 1
+     plot([allochem.start_age(t) allochem.start_age(t)],...
+         100*[allochem.oolitic(t) allochem.oolitic(t-1)],...
+         '-', 'linewidth', 2, 'color' , [colors(1,:) b_alpha])
+
+     end
+end
+
+% Plot xDD 
+p = plot(xdd.age, oc_vsmooth, 'color', [colors(3,:) b_alpha*2],'linewidth', 2,...
+    'linestyle', '-', 'Marker', 'none');
+
+
+% Format
+ylim([-10 60])
+
+%% Evaluate model 
+op = interp1(-tinterp/1e6,movmean(ooid_potential2,w_smooth),1:541);
+
+% Just the phanerozoic
+xDD_ooids = oc_vsmooth_t(1:541);
+xDD_ooids = fillmissing(xDD_ooids,'linear');
+
+% Bin edges for allochemical dataset 
+lims = [0,round(max(mgca.Age))];
+xinterp = linspace(0,max(mgca_age),range(lims)-1);
+op_x = xinterp(2:end-1);
+
+for this = 1:height(allochem)
+
+    [~, closest(this, 1)] = min(abs(op_x - allochem.start_age(this)));
+    [~, closest(this, 2)] = min(abs(op_x - allochem.end_age(this)));
+
+end
+
+% Find bin centers and the mean of each timbebin 
+for this = 1:height(allochem)
+
+    inds = op_x(closest(this,1))' > op_x & op_x > op_x(closest(this,2))';
+    resampled(this) = nanmean(op(inds));
+
+end
+
+% Fit the datasets
+[rhoallo, pallo] = corr(allochem.oolitic, resampled');
+[rho, p] = corr(op', xDD_ooids);
+
+%% Compare to random fit of xDD data
+num_perms = 50000;
+
+for rep = 1:num_perms
+  
+    % Randomly generate permutations
+    r_ind = randperm(length(op));
+    xDD_ooids_r = xDD_ooids(r_ind);
+    
+    % find best fit of the randomly generated
+    [~, ~, rhor(rep), pr(rep)] = manualFit(op', xDD_ooids_r);
+  
+    % Resample to the kiessling timescale
+    for this = 1:height(allochem)
+        inds = op_x(closest(this,1))' > op_x & op_x > op_x(closest(this,2))';
+        resampled_ra(this) = mean(xDD_ooids_r(inds));
+    end
+    % Best fit to Kiessling timescale and data
+    [~, ~, rhoallo_ra(rep), pallo_ra(rep)] = manualFit(allochem.oolitic,resampled_ra');
+    
+    
+end
+
+
+% convert from R to R^2
+rhoallo_ra_sq = rhoallo_ra.^2; 
+rhoallo_sq = rhoallo.^2;
+
+figure(10); clf
+hold on; box on; grid on;
+h = histogram(rhoallo_ra_sq, 'Normalization', 'Probability');
+h.EdgeColor = 'none';
+h.FaceColor = colors(1,:);
+plot([rhoallo_sq rhoallo_sq], [0,1.5*max(h.Values)])
+ylim([0 max(h.Values)+.1*max(h.Values)])
+xlim([0 max(rhoallo_ra_sq)])
+pbaspect([1 1 1])
+set(gca, 'fontsize', 12, 'YTickLabels',[])
+xlabel('R^2', 'Fontsize', 14) 
+xlim([0 0.7])
+set(gca, 'fontsize', 12, 'YTickLabels',[], 'XTick', [0 0.2 0.4 0.6])
+
+rhor_sq = rhor.^2;
+rho_sq = rho.^2; 
+
+figure(11); clf
+hold on; box on; grid on;
+h = histogram(rhor_sq, 'Normalization', 'Probability');
+h.EdgeColor = 'none';
+h.FaceColor = colors(3,:);
+plot([rho_sq rho_sq], [0,max(h.Values)+.1*max(h.Values)])
+ylim([0 max(h.Values)+.1*max(h.Values)])
+xlim([0 0.7])
+pbaspect([1 1 1])
+set(gca, 'fontsize', 12, 'YTickLabels',[], 'XTick', [0 0.2 0.4 0.6])
+xlabel('R^2', 'Fontsize', 14)
+
+
+
+
+
+
+%% helping functions
+function formatTS()
+
+    colors =[hex2rgb('#fa9442');
+    hex2rgb('#008aa1');
+    hex2rgb('#1b3644')];
+
+    grid on
+    st = -10;
+    fin = 550;
+    
+    rectangle('Position', [490 -1000 35 2000],...
+        'facecolor', [colors(3,:), .2],... 
+        'edgecolor', 'none')
+
+    rectangle('Position', [320 -1000 40 2000],...
+        'facecolor', [colors(3,:), .2],... 
+        'edgecolor', 'none')
+
+
+    xlim([st fin])
+    set(gca, 'fontsize', 14, 'Xdir', 'reverse')
+    pbaspect([3 1 1])
+end
+
+function running_cov = runningCovariance(vector, gwin)
+
+    for n = 0:size(vector,1)-gwin
+
+        c = cov(vector(n + (1:gwin),:));
+        running_cov(n+1,:) = c(2,1);
+
+    end
+end
+
+function [yhat, B, rho, p] = manualFit(x, Y)
+
+
+    X = [ones(size(x)), x];
+
+    Xt = X';
+  
+    Xt_X = Xt * X; 
+    Xt_Y = Xt * Y; 
+
+    B = Xt_X \ Xt_Y;
+    
+    yhat = B(2)*x + B(1);
+    [rho, p] = corr(Y, yhat,'Type', 'pearson');
+
+
+
+end
+
+
+function [dydt] = ode_scenario2(t,y,SAL,chi,A_Blakey_smooth,...
+    J_in_C,J_in_Alk,ocean_mass,tinterp,Tinterp,Ca,Mg,SO4,Earth_SA,F_rain,CaCO3_rain,chi2)
+    T = interp1(tinterp,Tinterp,t);
+    % extract the variables from the y vector:
+    C = y(1);       % units: mol kgSW-1
+    Alk = y(2);     % units: mol kgSW-1
+    % compute the state of the carbonate system with CO2SYS:
+    [Result,~,~] = CO2SYS_modified(C*1e6,Alk*1e6,2,1,SAL,T,T,0,0,...
+        interp1(tinterp,Ca,t),interp1(tinterp,Mg,t),...
+        interp1(tinterp,SO4,t),15,1,0,0,1,15,1,2,2);
+    Omega_C = real(Result(17));
+    % carbonate precipitation flux:
+    J_carb_C = chi*interp1(tinterp,A_Blakey_smooth,t)*R_calcite(Omega_C,T,interp1(tinterp,SO4,t)) + ...
+        Earth_SA*interp1(tinterp,F_rain,t)*CaCO3_rain*chi2; % second line: deep-ocean carbonate sink (post mid-Mesozoic revolution)
+    J_carb_Alk = 2*J_carb_C;
+    % mass balance:
+    dNC_dt = J_in_C - J_carb_C;
+    dNAlk_dt = J_in_Alk - J_carb_Alk;
+    % Assemble the dydt estimates into a column vector.
+    % Divide by ocean mass to convert fluxes in [mol yr-1] to concentration changes [mol kgSW-1 yr-1]
+    dydt = [dNC_dt/ocean_mass; dNAlk_dt/ocean_mass];
+end
+
+
+% Returns the precipitation rate [mol m-2 yr-1] of calcite, based on Burton
+% & Walter (1987) and Mucci (1989)
+% SO4 in mmol/kg
+function R = R_calcite(omega_C,T,SO4)
+    n = interp1([5,25,37],[0.6,1.9,2.3],T,'linear','extrap'); % k as a function of T, based on Burton & Walter (1987)
+    k = interp1([5,25,37],[14,3.9,3.7],T,'linear','extrap'); % n as a function of T, based on Burton & Walter (1987)
+    % scale by the seawater sulfate: Mucci 1989: sulfate free seawater has
+    % log(k) 0.21 units higher than seawater sulfate (28 mmol/kg):
+    X_adjustment_SO4 = polyfit([0 28],[0.21 0],1); % for fitting log10(k)
+    k_adjustment_SO4 = 10.^polyval(X_adjustment_SO4,SO4);
+    % put it all together:
+    if omega_C > 0
+        R = (k*k_adjustment_SO4)*(omega_C-1).^n / 1000 * 8760; % last 2 terms convert from [umol/m^2/hr] to [mol m-2 yr-1]
+    else
+        R = 0;
+    end
+end
+
